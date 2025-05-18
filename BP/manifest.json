@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Bedrock-TPA §r(§a1.0.0§r)",
+    "description": "§aA script that request a teleportation to another player or even go back to your recent location.",
+    "uuid": "0ea9e2fe-38c2-4f02-90db-f949d6fe75d4",
+    "min_engine_version": [1, 21, 80],
+    "version": [1, 0, 0]
+  },
+  "modules": [
+    {
+      "description": "Behavior Pack Module",
+      "type": "data",
+      "uuid": "0a28dc35-1625-47e9-94c9-3435dfdc9d2a",
+      "version": [1, 0, 0]
+    },
+    {
+      "description": "scripts",
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/index.js",
+      "uuid": "6964b53a-d5e1-4a67-8aee-933379bfdf73",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0-beta"
+    }
+  ],
+  "metadata": {
+    "author": ["IndeedItzGab"],
+    "license": "GPL-3.0-or-later",
+    "product_type": "addon"
+  }
+}
