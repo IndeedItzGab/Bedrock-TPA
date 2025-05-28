@@ -20,7 +20,6 @@ registerCommand(commandInformation, (origin) => {
   
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)
-  console.info(teleportData[0].receiver)
   if(!teleportData.some(d => d.receiver === player.name)) return player.sendMessage(`${chatPrefix} ${config.No_Teleport_Requests}`)
   
   const targetPlayer = world.getPlayers().find(p => p.name === teleportData.find(d => d.receiver === player.name).requester)

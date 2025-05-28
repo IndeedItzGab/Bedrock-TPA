@@ -63,7 +63,7 @@ Teleport_Message_Back_To_Sender: "§c%player% §6has accepted your teleportation
 Teleported_Message: "§6Teleported!",
 // for Teleported_Message_TpAuto  %player% placeholder for player name
 Teleported_Message_TpAuto: "§c%player% §6has teleported to you! You have the /tpauto features turned on!",
-Move_Cancel_Message: "§6You have moved and the teleport request has been removed!",
+//Move_Cancel_Message: "§6You have moved and the teleport request has been removed!",
 Rejected_Sender: "§6The player has rejected your §crequest§6!",
 Rejected_Message: "§6You have rejected the §crequest§6!",
 Player_Is_In_Disabled_World: "§6The player you wanted to teleport to is in §cdisabled world§6!",
@@ -72,22 +72,14 @@ Error_Cancelling_Request: "§6You can't cancel your own §crequest!",
 Request_Cancelled: "§6You successfully cancelled the §cteleportation request§6!",
 Death_Message_Coords: "§6Your death location is: §c%coords%§6!",
 Time_Left: "§6You have §c%seconds% §6seconds to accept or deny the request",
-Damaged_Cancel_Message: "§6You were damaged and the teleport request has been removed!",
-Different_Gamemode: "§6You can't use any teleportation commands, because you are in §cSPECTATOR §6mode!",
-World_Doesnt_Exists_Or_Unloaded: "§6The world you're trying to teleport to is either unloaded or doesn't exist!",
+//Damaged_Cancel_Message: "§6You were damaged and the teleport request has been removed!",
+//Different_Gamemode: "§6You can't use any teleportation commands, because you are in §cSPECTATOR §6mode!",
+//World_Doesnt_Exists_Or_Unloaded: "§6The world you're trying to teleport to is either unloaded or doesn't exist!",
 Enabled_TpAuto: "§6From now on you will §cautomatically accept §6all /tpa requests!",
 Disabled_TpAuto: "§6From now on you §cwon't automatically accept §6all /tpa requests!",
 Player_Has_Ignored_You: "§6The player has §cignored §6your teleportation requests!",
-Player_Not_Same_World: "§6The player you have been trying to §cteleport §6is not in the same §cworld§6!",
+//Player_Not_Same_World: "§6The player you have been trying to §cteleport §6is not in the same §cworld§6!",
 
-// PARTICLES AND SOUNDS
-// Here you can change the sound volume or the pitch. These are the recommended values
-// Select the name for the sound from here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
-Sound_Name: "ENTITY_EXPERIENCE_ORB_PICKUP", // Not Implemeneted
-sound_volume: 3.0, // Not Implemented
-sound_pitch: 0.533, // Not Implemented
-// Select the name for the particle from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
-Particle_Name: "EXPLOSION_NORMAL", // Not Implemented
 
 // If you want to disable simpletpa for some worlds, then you can add them by adding _ 'NameOfTheWorld'
 //Disabled Worlds:
@@ -97,35 +89,35 @@ disabled_worlds: [ 'disabledworld' ], // Not Implemented
 // B A C K    S E T T I N G S
 
 // If you want to disable the back command, then set this to true
-disable_back_command: false, // Not Implemented
+// disable_back_command: false,
 
 // If you want to disable the death coords message, then set this to true
-disable_coords_message: false, // Not Implemented
+// disable_coords_message: false,
 
 // If you want to disable saving the death location, then set this to true
-disable_back_on_death: false, // Not Implemented
+// disable_back_on_death: false,
 
 // If you want to disable saving the TP Locations such as TPA, TPAHERE, then set this to true
-disable_back_on_tp: false, // Not Implemented
+// disable_back_on_tp: false,
 
 //Booleans
 //  If you want to disable checking for gamemode if equals to spectator, then set this to true
-disable_gamemode_check: false, // Not Implemented
+// disable_gamemode_check: false, // Not Implemented
 //  If you want to disable saving the accept or deny buttons, then set this to true
-disable_accept_deny_buttons: false, //Not Implemented
+// disable_accept_deny_buttons: false, //Not Implemented
 //  If you want to disable saving the particles, then set this to true
-disable_particles: false, // Not Implemented
+// disable_particles: false, // Not Implemented
 //  If you want to disable saving the move system, then set this to true
-disable_move_system: false, // Not Implemented
+// disable_move_system: false, // Not Implemented
 // If you want to disable sounds from the plugin, then set this to true
-disable_sound: false, // Not Implemented
+// disable_sound: false, // Not Implemented
 
 // If you want to disable interdimensional travel(only allowed to use the plugin in the same world with other player), then set this to true
-disable_interdimensional_travel: false, // Not Implemeted
+// disable_interdimensional_travel: false, // Not Implemeted
 // If you want to disable the invincibility after teleporting, then set this to true
-disable_invincibility: false, // Not Implemented
+// disable_invincibility: false, // Not Implemented
 // If you want to disable logging /back locations from quitting the server, then set this to true
-disable_back_on_quit: false, // Not Implemented
+// disable_back_on_quit: false, // Not Implemented
 
 // Everything works with SECONDS
 //This will keep the teleport request alive for X seconds

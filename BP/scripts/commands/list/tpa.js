@@ -23,8 +23,7 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
-  const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
-  if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
+  
   // Cooldown
   let cooldowns = db.fetch("cooldown", true)
   const cooldown = cooldowns.find(d => d.name === player.name && d.command === "tpa") || []
@@ -41,11 +40,24 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   })
   
   db.store("cooldown", cooldowns)
+  
+  
   // Main Function
+  const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
+  if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.TpaToggled_Player_Message}`)
+  
+  // Check if the targetPlayer disabled their tpa
+  const toggle = db.fetch("tpaToggle", true)
+  if(toggle.some(d => d.name === targetPlayer.name)) return player.sendMessage(`${chatPrefix} ${config.TpaToggled_Player_Message}`)
+  
+  // Check if the targetPlayer ignored player
+  const Ignore = db.fetch("tpaIgnoreRequest", true)
+  if(Ignore.some(d => d?.blocker === targetPlayer.name && d?.blockedUser === player.name)) return player.sendMessage(`${chatPrefix} ${config.Player_Has_Ignored_You}`)
+
   let teleportData = db.fetch("teleportRequest", true)
   let backData = db.fetch("backData", true);
   if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
-  if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
+  //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
   if(teleportData.some(d => d.requester === player.name && type === "tpa")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TP_Request}`)
 
   // if TargetPlayer have TPA auto accept enabled

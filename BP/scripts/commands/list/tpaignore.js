@@ -26,16 +26,15 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
 
   // Main Function
-  let Ignore = db.fetch("tpaIgnoreRequest", true)
-  if(!teleportData.some(d => d.requester === player.name && d.receiver === targetPlayer.name)) return player.sendMessage(`${chatPrefix} ${config.No_Teleport_Requests}`)
-  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${confif.Player_Is_Player_tpignore}`)
+  let ignoreData = db.fetch("tpaIgnoreRequest", true)
+  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player_tpignore}`)
   
-  if(ignoreData.some(d => d?.blocker === player.name && d?.blockedUser === targetPlayer.name)) {
+  if(!ignoreData.some(d => d?.blocker === player.name && d?.blockedUser === targetPlayer.name)) {
     ignoreData.push({
       blocker: player.name,
       blockedUser: targetPlayer.name
     })
-  player.sendMessage(`${chatPrefix} ${config.Player_Is_Ignored}`)
+    player.sendMessage(`${chatPrefix} ${config.Player_Is_Ignored}`)
   } else {
     ignoreData = ignoreData.filter(d => d.blocker !== player.name && d.blockedUser !== targetPlayer.name)
     player.sendMessage(`${chatPrefix} ${config.Player_Is_Already_Ignored}`)
