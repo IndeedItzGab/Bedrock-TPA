@@ -9,6 +9,9 @@ An Minecraft: Bedrock Edition add-on inspired by [Simple-TPA](https://www.spigot
 - Beta APIs enabled in experimental features section.
 ![beta_api](docs/images/beta_apis.jpg)
 
+## Installation
+Visit [here](docs/INSTRUCTIONS.md) for more information about installing this project.
+
 ## Features
 - Allows you to teleport to a certain players with if that player accepted your teleportation request.
 - You can teleport back to your recent location when you died or recently teleported to a certain player.
