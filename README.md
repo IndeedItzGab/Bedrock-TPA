@@ -5,6 +5,11 @@
 
 An Minecraft: Bedrock Edition add-on inspired by [Simple-TPA](https://www.spigotmc.org/resources/simple-tpa.64270/). Allowing players to teleport to another players providing better interaction between another.
 
+## Documentation
+- [Commands List](https://github.com/IndeedItzGab/Bedrock-TPA/blob/main/docs/COMMANDS.md#available-commands)
+- [FAQ](https://github.com/IndeedItzGab/Bedrock-TPA/blob/main/docs/FAQ.md#frequently-asked-questions)
+- [Installation Guide](https://github.com/IndeedItzGab/Bedrock-TPA/blob/main/docs/INSTRUCTIONS.md#instructions)
+
 ## Requirements
 - Beta APIs enabled in experimental features section.
 ![beta_api](docs/images/beta_apis.jpg)
