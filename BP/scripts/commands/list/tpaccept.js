@@ -17,7 +17,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
-  
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)
   let backData = db.fetch("backData", true);
@@ -29,7 +30,9 @@ registerCommand(commandInformation, (origin) => {
   if(targetPlayer) {
     if(teleportData.find(d => d.receiver === player.name)?.type === "tpa") {
       targetPlayer.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
+      targetPlayer.addTag(`bedrocktpa:isTp`)
       system.runTimeout(() => {
+        if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
         targetPlayer.tryTeleport(player.location, player.dimension)
         player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
         targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
@@ -44,8 +47,9 @@ registerCommand(commandInformation, (origin) => {
       }, config.delay_teleportation*20)
     } else {
       player.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
-      
+      player.addTag(`bedrocktpa:isTp`)
       system.runTimeout(() => {
+        if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
         player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
         player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
         targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)

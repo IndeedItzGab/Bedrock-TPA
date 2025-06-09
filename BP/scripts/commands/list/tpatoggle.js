@@ -22,6 +22,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   let toggle = db.fetch("tpaToggle", true)
   
   if(targetPlayerName) {

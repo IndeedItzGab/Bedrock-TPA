@@ -18,6 +18,7 @@ registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
   if(!player.isAdmin()) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
   // Cooldown
   let cooldowns = db.fetch("cooldown", true)

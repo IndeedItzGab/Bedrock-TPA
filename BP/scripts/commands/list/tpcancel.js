@@ -23,13 +23,15 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
   if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
 
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)
   if(!teleportData.some(d => d.requester === player.name && d.receiver === targetPlayer.name)) return player.sendMessage(`${chatPrefix} ${config.No_Teleport_Requests}`)
-  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${confif.Error_Cancelling_Request}`)
+  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Error_Cancelling_Request}`)
   
   player.sendMessage(`${chatPrefix} ${config.Request_Cancelled}`)
   teleportData = teleportData.filter(d => d.requester !== player.name && d.receiver !== targetPlayer.name)

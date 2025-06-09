@@ -23,7 +23,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
-  
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   // Cooldown
   let cooldowns = db.fetch("cooldown", true)
   const cooldown = cooldowns.find(d => d.name === player.name && d.command === "tpa") || []
@@ -59,11 +60,13 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
   //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
   if(teleportData.some(d => d.requester === player.name && type === "tpa")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TP_Request}`)
+  if(player.hasTag("bedrocktpa:hurted")) return player.sendMessage(`${chatPrefix} ${config.Damaged_Cancel_Message}`)
 
   // if TargetPlayer have TPA auto accept enabled
   if(targetPlayer.hasTag("tpaAuto")) {
     player.sendMessage(`${chatPrefix} ${config.Teleport_Message_TPAUTO.replace("%time%", config.delay_teleportation)}`)
     system.runTimeout(() => {
+      
       player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
       player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
       targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message_TpAuto.replace("%player%", player.name)}`)

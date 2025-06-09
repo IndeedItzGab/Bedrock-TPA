@@ -22,6 +22,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
   if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
 

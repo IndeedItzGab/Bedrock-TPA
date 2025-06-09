@@ -17,6 +17,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayer) => {
   
   const player = origin.sourceEntity
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   const isAuto = player.hasTag("tpaAuto")
   
   // Main Function

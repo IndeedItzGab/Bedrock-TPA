@@ -17,7 +17,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
-  
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)
   if(!teleportData.some(d => d.receiver === player.name)) return player.sendMessage(`${chatPrefix} ${config.No_Teleport_Requests}`)

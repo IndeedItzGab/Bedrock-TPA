@@ -24,7 +24,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   let player = origin.sourceEntity
   let backData = db.fetch("backData", true)
-
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
   if(targetPlayerName) {
     // Administrative Function

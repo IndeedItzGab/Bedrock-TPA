@@ -23,7 +23,8 @@ const commandInformation = {
 registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   const player = origin.sourceEntity
-  
+  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   // Cooldown
   let cooldowns = db.fetch("cooldown", true)
   const cooldown = cooldowns.find(d => d.name === player.name && d.command === "tpahere") || []
@@ -57,6 +58,8 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
   //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
   if(teleportData.some(d => d.requester === player.name && d.type === "tpahere")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TPHere_Request}`)
+  if(player.hasTag("bedrocktpa:hurted")) return player.sendMessage(`${chatPrefix} ${config.Damaged_Cancel_Message}`)
+
 
   targetPlayer.sendMessage(`${chatPrefix} ${config.Sent_Here_Request_On_You.replace("%player%", player.name)}`)
   targetPlayer.sendMessage(`${chatPrefix} ${config.Accept_Message}`)
