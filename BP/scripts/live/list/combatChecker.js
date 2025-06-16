@@ -1,4 +1,4 @@
-import { world } from "@minecraft/server"
+import { world, system } from "@minecraft/server"
 import * as db from "../../utilities/database.js"
 
 globalThis.combatChecker = () => { 
