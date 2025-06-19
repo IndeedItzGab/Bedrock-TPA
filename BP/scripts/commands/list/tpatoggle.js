@@ -13,7 +13,7 @@ const commandInformation = {
   usage:[
     {
       name: "player",
-      type: 3,
+      type: "String",
       optional: true
     }
   ]

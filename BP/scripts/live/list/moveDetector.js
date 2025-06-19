@@ -12,7 +12,7 @@ globalThis.moveDetector = () => {
     if(tempCache.some(d => d.name === player.name)) {
       if(tempCache.some(d => d.name === player.name && d.recentLocation === player.location)) return;
       tempCache = tempCache.filter(d => d.name !== player.name)
-      player.removeTag("bedrocktpa:isTp")
+      system.run(() => player.removeTag("bedrocktpa:isTp"))
       player.sendMessage(`${chatPrefix} ${config.Move_Cancel_Message}`)
     } else {
       tempCache.push({

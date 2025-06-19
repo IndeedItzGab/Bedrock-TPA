@@ -30,7 +30,7 @@ registerCommand(commandInformation, (origin) => {
   if(targetPlayer) {
     if(teleportData.find(d => d.receiver === player.name)?.type === "tpa") {
       targetPlayer.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
-      targetPlayer.addTag(`bedrocktpa:isTp`)
+      system.run(() => targetPlayer.addTag(`bedrocktpa:isTp`))
       system.runTimeout(() => {
         if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
         targetPlayer.tryTeleport(player.location, player.dimension)
@@ -47,7 +47,7 @@ registerCommand(commandInformation, (origin) => {
       }, config.delay_teleportation*20)
     } else {
       player.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
-      player.addTag(`bedrocktpa:isTp`)
+      system.run(() => player.addTag(`bedrocktpa:isTp`))
       system.runTimeout(() => {
         if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
         player.tryTeleport(targetPlayer.location, targetPlayer.dimension)

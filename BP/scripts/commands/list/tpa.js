@@ -14,7 +14,7 @@ const commandInformation = {
   usage:[
     {
       name: "player",
-      type: 3,
+      type: "String",
       optional: false
     }
   ]
@@ -69,6 +69,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
       
       player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
       player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
+      system.run(() => player.addTag("bedrocktpa:isTp"))
       targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message_TpAuto.replace("%player%", player.name)}`)
       
       backData = backData.filter(d => d.name !== player.name)

@@ -8,7 +8,7 @@ globalThis.combatChecker = () => {
       let playerHurtData = hurtedData.find(d => d.name === player.name)
       if(!playerHurtData || playerHurtData?.time >= system.currentTick) return;
       
-      player.removeTag("bedrocktpa:hurted")
+      system.run(() => player.removeTag("bedrocktpa:hurted"))
       hurtedData = hurtedData.filter(d => d.name !== player.anme)
       db.store("bedrocktpa:hurted", hurtedData)
     } catch (error) {

@@ -18,6 +18,6 @@ world.afterEvents.entityHurt.subscribe((event) => {
       hurtedData.push({ name: event.hurtEntity.name, time: system.currentTick + (15*20)}) :
       victimData.time = system.currentTick + (15*20)
 
-  event.hurtEntity.addTag("bedrocktpa:hurted")
+  system.run(() => event.hurtEntity.addTag("bedrocktpa:hurted"))
   db.store("bedrocktpa:hurted", hurtedData)
 })
