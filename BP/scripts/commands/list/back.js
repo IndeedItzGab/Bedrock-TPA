@@ -54,7 +54,12 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
     // Non-Administrative Function
     if(!backData.some(d => d.name === player.name)) return player.sendMessage(`${chatPrefix} ${config.Player_Doesnt_Have_Back_Point_1}`)
     let playerBackData = backData.find( d => d.name === player.name)
+    if(player.hasTag("bedrocktpa:hurted")) return player.sendMessage(`${chatPrefix} ${config.Damaged_Cancel_Message}`)
+    system.run(() => player.addTag(`bedrocktpa:isTp`))
+    
+
     system.runTimeout(() => {
+      if(!player.hasTag("bedrocktpa:isTp")) return
       const dimension = world.getDimension(playerBackData.dimension)
       player.tryTeleport(playerBackData.location, {dimension})
       player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
@@ -64,6 +69,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
         location: player.location,
         dimension: player.dimension.id
       })
+      system.run(() => player.removeTag("bedrocktpa:isTp"))
     }, config.delay_teleportation*20)
     player.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
   }

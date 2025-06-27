@@ -43,13 +43,14 @@ registerCommand(commandInformation, (origin) => {
           location: targetPlayer.location,
           dimension: targetPlayer.dimension.id
         })
+        system.run(() => targetPlayer.removeTag(`bedrocktpa:isTp`))
         db.store("backData", backData)
       }, config.delay_teleportation*20)
     } else {
       player.sendMessage(`${chatPrefix} ${config.Teleport_Message.replace("%time%", config.delay_teleportation)}`)
       system.run(() => player.addTag(`bedrocktpa:isTp`))
       system.runTimeout(() => {
-        if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
+        if(!player.hasTag("bedrocktpa:isTp")) return
         player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
         player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
         targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
@@ -60,6 +61,7 @@ registerCommand(commandInformation, (origin) => {
           location: player.location,
           dimension: player.dimension.id
         })
+        system.run(() => player.removetag(`bedrocktpa:isTp`))
         db.store("backData", backData)
       }, config.delay_teleportation*20)
     }

@@ -5,4 +5,4 @@ import "./list/moveDetector.js"
 system.runInterval(() => {
   combatChecker()
   moveDetector()
-}, 1*1000)
+}, 1*20)

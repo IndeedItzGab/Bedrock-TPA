@@ -65,11 +65,11 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   // if TargetPlayer have TPA auto accept enabled
   if(targetPlayer.hasTag("tpaAuto")) {
     player.sendMessage(`${chatPrefix} ${config.Teleport_Message_TPAUTO.replace("%time%", config.delay_teleportation)}`)
+    system.run(() => player.addTag("bedrocktpa:isTp"))
     system.runTimeout(() => {
-      
+      if(!player.hasTag("bedrocktpa:isTp")) return;
       player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
       player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
-      system.run(() => player.addTag("bedrocktpa:isTp"))
       targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message_TpAuto.replace("%player%", player.name)}`)
       
       backData = backData.filter(d => d.name !== player.name)
@@ -78,6 +78,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
         location: player.location,
         dimension: player.dimension.id
       })
+      system.run(() => player.removeTag("bedrocktpa:isTp"))
       db.store("backData", backData)
     }, config.delay_teleportation*20)
     return;
