@@ -59,7 +59,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   let backData = db.fetch("backData", true);
   if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
   //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
-  if(teleportData.some(d => d.requester === player.name && type === "tpa")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TP_Request}`)
+  if(teleportData.some(d => d.requester === player.name && d.type === "tpa")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TP_Request}`)
   if(player.hasTag("bedrocktpa:hurted")) return player.sendMessage(`${chatPrefix} ${config.Damaged_Cancel_Message}`)
 
   // if TargetPlayer have TPA auto accept enabled
