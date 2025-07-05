@@ -83,7 +83,7 @@ Player_Has_Ignored_You: "§6The player has §cignored §6your teleportation requ
 
 // If you want to disable simpletpa for some worlds, then you can add them by adding _ 'NameOfTheWorld'
 //Disabled Worlds:
-disabled_worlds: [ 'disabledworld' ], // Not Implemented
+// disabled_worlds: [ 'disabledworld' ], // Not Implemented
 
 // If you set anything to true, you will disable it.
 // B A C K    S E T T I N G S

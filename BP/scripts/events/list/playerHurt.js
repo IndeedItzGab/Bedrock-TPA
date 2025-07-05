@@ -4,7 +4,7 @@ import { config } from "../../config.js"
 const chatPrefix = config.prefix
 
 world.afterEvents.entityHurt.subscribe((event) => {
-  if(!(event.hurtEntity instanceof Player) || event.hurtEntity.hasTag("bedrocktpa:isTp")) return;
+  if(!(event.hurtEntity instanceof Player) || !event.hurtEntity.hasTag("bedrocktpa:isTp")) return;
 
   let hurtedData = db.fetch("bedrocktpa:hurted", true)
   const victimData = hurtedData.find(d => d.name === event.hurtEntity.name)
