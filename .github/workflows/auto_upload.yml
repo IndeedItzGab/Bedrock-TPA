@@ -1,0 +1,113 @@
+# This workflow allow me to easily upload a certain version of my project within the github tags and externally.
+
+name: Automation Uploader
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Retrieve Required Data
+        id: extract-name
+        run: |
+          MESSAGE=$(yq '.message' metadata.yml)
+          VERSION=$(yq -r '.version' metadata.yml)
+          NAME=$(yq '.name' metadata.yml)
+          STATUS=$(yq '.status' metadata.yml)
+          echo "$MESSAGE" > message.txt
+          echo "MESSAGE<<EOF" >> $GITHUB_ENV
+          cat message.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "FILE_NAME=$NAME-$VERSION \($STATUS\).mcpack" >> $GITHUB_ENV
+          echo "NAME=$NAME" >> $GITHUB_ENV
+
+      - name: Compression Session
+        run: |
+          zip -r temp.zip BP/*
+          mv temp.zip "$FILE_NAME"
+
+      - name: Upload to Github Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a $VERSION -m "$MESSAGE"
+          git push origin $VERSION
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
+          body: |
+            ${{ env.MESSAGE }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload MCPACK file
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILE_NAME }}
+          asset_name: ${{ env.FILE_NAME }}
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload to CurseForge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_TOKEN: "${{ secrets.CURSEFORGE_TOKEN }}"
+          FILE_NAME: ${{ env.FILE_NAME }}
+          MESSAGE: ${{ env.MESSAGE }}
+        run: |
+          echo @$FILE_NAME
+          RESPONSE=$(curl -X POST \
+            -H "X-Api-Token: $CF_API_TOKEN" \
+            -F metadata="$(jq -n --arg changelog "${{ env.MESSAGE }}" \
+              '{"changelog": "${{ env.MESSAGE }}", "changelogType": "markdown", "gameVersion": [13429, 13543, 13604], "releaseType": "release"}')" \
+            -F "file=@\"./$FILE_NAME\"" \
+            "https://minecraft-bedrock.curseforge.com/api/projects/1259901/upload-file")
+          FILE_ID=$(echo $RESPONSE | jq -r '.id')
+          echo "CURSEFORGE_FILE_ID=$FILE_ID" >> $GITHUB_ENV
+        
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          NAME: Changes Logger
+          MESSAGE: ${{ env.MESSAGE }}
+          CF_FILE_ID: ${{ env.CURSEFORGE_FILE_ID }}
+          AVATAR: https://cdn.discordapp.com/attachments/1388361920696029265/1393812849880469595/Change_Logger.png?ex=687488df&is=6873375f&hm=8e241886a7643c7928c7d02bf93aec07343e233d19f141cb20b5f051fc2285c5&
+        run: |
+          FULL_MESSAGE="$MESSAGE"
+          USERNAME="$NAME"
+          AVATAR_URL="$AVATAR"
+          JSON=$(jq -nc --arg content "$FULL_MESSAGE
+          
+          ### Download Section
+           - <:Github:1393587335979073698> [Github](<${{ steps.create_release.outputs.html_url }}>)
+           - <:CurseForge:1377993483800940584> [CurseForge](<https://www.curseforge.com/minecraft-bedrock/scripts/bedrocktpa/files/$CF_FILE_ID>)
+          <@&1373921210907492493>
+          -# You may need to wait for CurseForge to upload the file in order for you to download it. Therefore, you can either wait for the file in curseforge or download it directly from Github." --arg name "$USERNAME" --arg avatar "$AVATAR_URL" '{content: $content, username: $name, avatar_url: $avatar}')
+          curl -X POST -H "Content-Type: application/json" -d "$JSON" "$DISCORD_WEBHOOK"

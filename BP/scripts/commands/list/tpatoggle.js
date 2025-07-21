@@ -28,7 +28,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   
   if(targetPlayerName) {
     // Administrative Function
-    if(!player.isAdmin()) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
+    if(player.playerPermissionLevel < 2) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
     const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
     if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
     

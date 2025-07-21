@@ -10,6 +10,7 @@ const chatPrefix = config.prefix
 const commandInformation = {
   name: "tpahereall",
   description: "Sends a teleportation request to teleport everyone to you.",
+  permissionLevel: 1,
   aliases: [],
   usage:[]
 }
@@ -17,7 +18,6 @@ const commandInformation = {
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
-  if(!player.isAdmin()) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
   // Cooldown
