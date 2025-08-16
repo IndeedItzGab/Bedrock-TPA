@@ -1,6 +1,6 @@
 name: BedrockTPA
-version: V1.0.8
+version: V1.0.81
 status: STABLE
 message: |
-  # BedrockTPA V1.0.8
-  - Revamped detection on administrators, players can now use any administrative commands as long as they are Operator. Therefore, `Admin` tag is no longer necessary for these.
+  # BedrockTPA V1.0.81
+  - Updated to support the latest version of Minecraft: Bedrock Edition.
