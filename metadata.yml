@@ -1,6 +1,6 @@
 name: BedrockTPA
-version: V1.0.81
+version: V1.0.9
 status: STABLE
 message: |
-  # BedrockTPA V1.0.81
-  - Updated to support the latest version of Minecraft: Bedrock Edition.
+  # BedrockTPA V1.0.9
+  - Fixed compatibility issues with Minecraft 1.21.111 and above.
