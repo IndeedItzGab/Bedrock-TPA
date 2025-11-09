@@ -1,6 +1,6 @@
 name: BedrockTPA
-version: V1.0.9
+version: V1.1.0
 status: STABLE
 message: |
-  # BedrockTPA V1.0.9
-  - Fixed compatibility issues with Minecraft 1.21.111 and above.
+  # BedrockTPA V1.1.0
+  - The pack will now automatically support manifest updates. Therefore, this pack supports minecraft bedrock (1.21.120) and above without further manual manifest updates.
