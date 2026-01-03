@@ -2,9 +2,9 @@ import {
   world,
   system
 } from "@minecraft/server";
-import { registerCommand }  from "../commandRegistry.js"
+import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -20,12 +20,13 @@ const commandInformation = {
   ]
 }
 
-registerCommand(commandInformation, (origin, targetPlayerName) => {
+
+registerCommand(commandInformation, (origin, target) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
-  const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
+  const targetPlayer = world.getPlayers().find(p => p.name === target)
   if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
 
   // Main Function

@@ -1,6 +1,6 @@
 import { world, Player } from "@minecraft/server"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 world.afterEvents.entityDie.subscribe(event => {

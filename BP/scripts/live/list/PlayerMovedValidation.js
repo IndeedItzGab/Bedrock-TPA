@@ -1,10 +1,10 @@
 import { world, system } from "@minecraft/server"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 let tempCache = []
-globalThis.moveDetector = () => {
+export function process() {
   world.getPlayers().forEach(player => {
     if(!player.hasTag("bedrocktpa:isTp")) return;
     
@@ -29,3 +29,5 @@ globalThis.moveDetector = () => {
     }
   })
 }
+
+

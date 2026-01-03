@@ -2,9 +2,9 @@ import {
   world,
   system
 } from "@minecraft/server";
-import { registerCommand }  from "../commandRegistry.js"
+import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -14,10 +14,24 @@ const commandInformation = {
   usage:[]
 }
 
+
+let cooldowns = []
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  // Cooldown
+  const cooldown = cooldowns.find(d => d.name === player.name)
+  if(cooldown?.tick >= system.currentTick) {
+    player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
+    return;
+  } else {
+    cooldowns = cooldowns.filter(d => d.name !== player.name)
+    cooldowns.push({
+      name: player.name,
+      tick: system.currentTick + config.tpa_cooldown*20
+    })
+  }
 
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)

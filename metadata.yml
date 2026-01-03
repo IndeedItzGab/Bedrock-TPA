@@ -1,6 +1,10 @@
 name: BedrockTPA
-version: V1.1.0
+version: V1.1.1
 status: STABLE
 message: |
-  # BedrockTPA V1.1.0
-  - The pack will now automatically support manifest updates. Therefore, this pack supports minecraft bedrock (1.21.120) and above without further manual manifest updates.
+  # BedrockTPA V1.1.1
+  - Implemented cooldown on all slash commands
+  - Refactored codes and change file's name style to a readable form
+  - Improvement with database management and handling teleportations
+  - Fixed an issue where a request process is still there after rejoining the game in a short time.
+  - Fixed message where the player does not exists replying with player's tpa disabed.

@@ -13,7 +13,7 @@ enable_teleport_logging: false, // Not Implemented
 // If you set it to true, you will disable the prefix
 // Make sure to restart the server in order to apply it
 disable_prefix: false, // Not Implemented
-prefix: "§c[§6BedrockTpa§c]§r",
+prefix: "§c[§6BedrockTPA§c]§r",
 
 // Messages:
 // Death_Message: "§6To teleport to your death location use §c/back",

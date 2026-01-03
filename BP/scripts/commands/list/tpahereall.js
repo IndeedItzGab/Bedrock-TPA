@@ -2,9 +2,9 @@ import {
   world,
   system
 } from "@minecraft/server";
-import { registerCommand }  from "../commandRegistry.js"
+import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 const commandInformation = {

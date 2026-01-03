@@ -2,9 +2,9 @@ import {
   world,
   system
 } from "@minecraft/server";
-import { registerCommand }  from "../commandRegistry.js"
+import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -20,32 +20,30 @@ const commandInformation = {
   ]
 }
 
-registerCommand(commandInformation, (origin, targetPlayerName) => {
+let cooldowns = []
+registerCommand(commandInformation, (origin, target) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  
 
   // Cooldown
-  let cooldowns = db.fetch("cooldown", true)
-  const cooldown = cooldowns.find(d => d.name === player.name && d.command === "tpa") || []
+  const cooldown = cooldowns.find(d => d.name === player.name)
   if(cooldown?.tick >= system.currentTick) {
     player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
     return;
+  } else {
+    cooldowns = cooldowns.filter(d => d.name !== player.name)
+    cooldowns.push({
+      name: player.name,
+      tick: system.currentTick + config.tpa_cooldown*20
+    })
   }
   
-  cooldowns = cooldowns.filter(d => d.name !== player.name && d.command !== "tpa")
-  cooldowns.push({
-    name: player.name,
-    command: "tpa",
-    tick: system.currentTick + config.tpa_cooldown*20
-  })
-  
-  db.store("cooldown", cooldowns)
-  
-  
   // Main Function
-  const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
-  if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.TpaToggled_Player_Message}`)
+  const targetPlayer = world.getPlayers().find(p => p.name === target)
+  if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
+  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
   
   // Check if the targetPlayer disabled their tpa
   const toggle = db.fetch("tpaToggle", true)
@@ -57,7 +55,6 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
 
   let teleportData = db.fetch("teleportRequest", true)
   let backData = db.fetch("backData", true);
-  if(player.name === targetPlayer.name) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Player}`)
   //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
   if(teleportData.some(d => d.requester === player.name && d.type === "tpa")) return player.sendMessage(`${chatPrefix} ${config.Already_A_TP_Request}`)
   if(player.hasTag("bedrocktpa:hurted")) return player.sendMessage(`${chatPrefix} ${config.Damaged_Cancel_Message}`)
@@ -96,6 +93,7 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   })
   
   db.store("teleportRequest", teleportData)
+
   // Timeout
   system.runTimeout(() => {
     teleportData = db.fetch("teleportRequest", true)

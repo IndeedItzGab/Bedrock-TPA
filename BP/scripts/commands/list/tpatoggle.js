@@ -2,9 +2,9 @@ import {
   world,
   system
 } from "@minecraft/server";
-import { registerCommand }  from "../commandRegistry.js"
+import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/database.js"
+import * as db from "../../utilities/DatabaseHandler.js"
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -19,17 +19,30 @@ const commandInformation = {
   ]
 }
 
-registerCommand(commandInformation, (origin, targetPlayerName) => {
+let cooldowns = []
+registerCommand(commandInformation, (origin, target) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
+  // Cooldown
+  const cooldown = cooldowns.find(d => d.name === player.name)
+  if(cooldown?.tick >= system.currentTick) {
+    player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
+    return;
+  } else {
+    cooldowns = cooldowns.filter(d => d.name !== player.name)
+    cooldowns.push({
+      name: player.name,
+      tick: system.currentTick + config.tpa_cooldown*20
+    })
+  }
+
   let toggle = db.fetch("tpaToggle", true)
-  
-  if(targetPlayerName) {
+  if(target) {
     // Administrative Function
-    if(player.playerPermissionLevel < 2) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
-    const targetPlayer = world.getPlayers().find(p => p.name.toLowerCase() === targetPlayerName.toLowerCase())
+    if(player.playerPermissionLevel !== 2) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
+    const targetPlayer = world.getPlayers().find(p => p.name === target)
     if(!targetPlayer) return player.sendMessage(`${chatPrefix} ${config.Player_Is_Null}`)
     
     if(toggle.some(d => d.name === targetPlayer.name)) {
@@ -61,7 +74,4 @@ registerCommand(commandInformation, (origin, targetPlayerName) => {
   }
   
   db.store("tpaToggle", toggle)
-  return {
-    status: 0
-  }
 })
