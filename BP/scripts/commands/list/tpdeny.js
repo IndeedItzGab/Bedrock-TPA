@@ -5,6 +5,7 @@ import {
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
 import * as db from "../../utilities/DatabaseHandler.js"
+import { soundReply } from "../../utilities/SoundReply.js";
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -15,31 +16,28 @@ const commandInformation = {
 }
 
 
-let cooldowns = []
+let cooldowns = new Map()
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+
   // Cooldown
-  const cooldown = cooldowns.find(d => d.name === player.name)
+  const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
+    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
   } else {
-    cooldowns = cooldowns.filter(d => d.name !== player.name)
-    cooldowns.push({
-      name: player.name,
-      tick: system.currentTick + config.tpa_cooldown*20
-    })
+    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
   }
 
   // Main Function
   let teleportData = db.fetch("teleportRequest", true)
-  if(!teleportData.some(d => d.receiver === player.name)) return player.sendMessage(`${chatPrefix} ${config.No_Teleport_Requests}`)
+  if(!teleportData.some(d => d.receiver === player.name)) return soundReply(player, config.No_Teleport_Requests, "note.bassattack")
   
   const targetPlayer = world.getPlayers().find(p => p.name === teleportData.find(d => d.receiver === player.name).requester)
-  player.sendMessage(`${chatPrefix} ${config.Rejected_Message}`)
-  targetPlayer.sendMessage(`${chatPrefix} ${config.Rejected_Sender}`)
+  soundReply(player, config.Rejected_Message, "note.fling")
+  soundReply(targetPlayer, config.Rejected_Sender, "note.bassattack")
   teleportData = teleportData.filter(d => d.receiver !== player.name && d.requester !== targetPlayer.name)
   db.store("teleportRequest", teleportData)
   

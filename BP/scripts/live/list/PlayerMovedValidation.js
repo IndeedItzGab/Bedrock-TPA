@@ -1,33 +1,30 @@
 import { world, system } from "@minecraft/server"
 import { config } from "../../config.js"
-import * as db from "../../utilities/DatabaseHandler.js"
+import { soundReply } from "../../utilities/SoundReply.js"
 const chatPrefix = config.prefix
 
-let tempCache = []
+let tempCache = new Map()
 export function process() {
-  world.getPlayers().forEach(player => {
-    if(!player.hasTag("bedrocktpa:isTp")) return;
+  for(const player of world.getPlayers()) {
+    if(!player.hasTag("bedrocktpa:isTp")) {
+      tempCache.delete(player.id);
+      continue;
+    };
     
-    if(tempCache.some(d => d.name === player.name)) {
-      if(tempCache.some(d => d.name === player.name && 
-        d.recentLocation.x === Math.round(player.location.x) &&
-        d.recentLocation.y === Math.round(player.location.y) &&
-        d.recentLocation.z === Math.round(player.location.z)
-      )) return;
-      tempCache = tempCache.filter(d => d.name !== player.name)
-      system.run(() => player.removeTag("bedrocktpa:isTp"))
-      player.sendMessage(`${chatPrefix} ${config.Move_Cancel_Message}`)
+    const cached = tempCache.get(player.id);
+    const pos = {
+      x: Math.floor(player.location.x),
+      y: Math.floor(player.location.y),
+      z: Math.floor(player.location.z)
+    };
+
+    if(cached) {
+      if(cached.x === pos.x && cached.y === pos.y && cached.z === pos.z) continue;
+      tempCache.delete(player.id)
+      system.run(() => player.removeTag("bedrocktpa:isTp"));
+      soundReply(player, config.Move_Cancel_Message, "note.bassattack")
     } else {
-      tempCache.push({
-        name: player.name,
-        recentLocation: {
-          x: Math.round(player.location.x),
-          y: Math.round(player.location.y),
-          z: Math.round(player.location.z)
-        }
-      })
+      tempCache.set(player.id, pos)
     }
-  })
+  }
 }
-
-

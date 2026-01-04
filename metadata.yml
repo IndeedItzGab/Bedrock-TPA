@@ -1,10 +1,9 @@
 name: BedrockTPA
-version: V1.1.1
+version: V1.1.2
 status: STABLE
 message: |
-  # BedrockTPA V1.1.1
-  - Implemented cooldown on all slash commands
-  - Refactored codes and change file's name style to a readable form
-  - Improvement with database management and handling teleportations
-  - Fixed an issue where a request process is still there after rejoining the game in a short time.
-  - Fixed message where the player does not exists replying with player's tpa disabed.
+  # BedrockTPA V1.1.2
+  - Fixed an issue during teleportation where it cancel the players because it detects the player moved even though they did not.
+  - Refactored slash commands cooldown with maps
+  - Removed the duplicated message when an operator used `/back` command on someone
+  - Implement sound effects

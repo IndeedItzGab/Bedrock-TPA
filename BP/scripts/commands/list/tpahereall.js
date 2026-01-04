@@ -5,6 +5,7 @@ import {
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
 import * as db from "../../utilities/DatabaseHandler.js"
+import { soundReply } from "../../utilities/SoundReply.js";
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -15,19 +16,21 @@ const commandInformation = {
   usage:[]
 }
 
+let cooldowns = new Map()
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
   // Cooldown
-  let cooldowns = db.fetch("cooldown", true)
-  const cooldown = cooldowns.find(d => d.name === player.name && d.command === "tpahere") || []
+  const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
+    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
+  } else {
+    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
   }
-  
+
   cooldowns = cooldowns.filter(d => d.name !== player.name && d.command !== "tpa")
   cooldowns.push({
     name: player.name,
@@ -55,7 +58,7 @@ registerCommand(commandInformation, (origin) => {
 
     targetPlayer.sendMessage(`${chatPrefix} ${config.Sent_Here_Request_On_You.replace("%player%", player.name)}`)
     targetPlayer.sendMessage(`${chatPrefix} ${config.Accept_Message}`)
-    targetPlayer.sendMessage(`${chatPrefix} ${config.Deny_Message}`)
+    soundReply(targetPlayer, config.Deny_Message, "note.banjo")
 
     teleportData.push({
       requester: player.name,
@@ -69,11 +72,11 @@ registerCommand(commandInformation, (origin) => {
       teleportData = db.fetch("teleportRequest", true)
       if(!teleportData.find(d => d.receiver === targetPlayer.name && d.requester === player.name && d.type === "tpahere")) return;
       teleportData = teleportData.filter(d => !(d.receiver === targetPlayer.name && d.requester === player.name && d.type === "tpahere"))
-      player?.sendMessage(`${chatPrefix} ${config.Timed_Out_Here_Message}`)
+      soundReply(player, config.Timed_Out_Here_Message, "note.bassattack")
       db.store("teleportRequest", teleportData)
     }, config.keep_alive*20)
   })
-  player.sendMessage(`${chatPrefix} ${config.Teleport_Message_Back_To_Sender_TPHEREALL}`)
+  soundReply(player, config.Teleport_Message_Back_To_Sender_TPHEREALL, "note.banjp")
   return {
     status: 0
   }

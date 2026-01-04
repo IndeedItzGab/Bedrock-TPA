@@ -1,6 +1,7 @@
 export const config = {
   commands: {
-    namespace: "bt"
+    namespace: "bt",
+    cooldown: 10 // All commands cooldown
   },
   
   
@@ -125,13 +126,4 @@ keep_alive: 60,
 //This will delay the teleportation for X seconds
 delay_back_command: 5,
 delay_teleportation: 5,
-//Cooldowns
-back_cooldown: 10,
-tpa_cooldown: 10,
-tpahere_cooldown: 10,
-tpahereall_cooldown: 10
-//To set a custom cooldown, you need to add a permission : simpletpa.cooldown.Y.X where Y is the command and  X are the seconds.
-//The options for commands are: tpa | tpahere | back | tpahereall
-//Example: simpletpa.cooldown.tpa.300 | simpletpa.cooldown.tpahere.300 | simpletpa.cooldown.tpahereall.300 | simpletpa.cooldown.back.300
-//This will set the cooldown for tpa/ tpahere/ tpahereall / back to 300 seconds
 }

@@ -5,6 +5,7 @@ import {
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
 import * as db from "../../utilities/DatabaseHandler.js"
+import { soundReply } from "../../utilities/SoundReply.js";
 const chatPrefix = config.prefix
 
 const commandInformation = {
@@ -14,25 +15,21 @@ const commandInformation = {
   usage:[]
 }
 
-let cooldowns = []
+let cooldowns = new Map()
 registerCommand(commandInformation, (origin, targetPlayer) => {
   
   const player = origin.sourceEntity
   if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
 
   // Cooldown
-  const cooldown = cooldowns.find(d => d.name === player.name)
+  const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    player.sendMessage(`${chatPrefix} ${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`)
+    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
   } else {
-    cooldowns = cooldowns.filter(d => d.name !== player.name)
-    cooldowns.push({
-      name: player.name,
-      tick: system.currentTick + config.tpa_cooldown*20
-    })
+    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
   }
-
+  
   const isAuto = player.hasTag("tpaAuto")
   
   // Main Function
@@ -41,7 +38,7 @@ registerCommand(commandInformation, (origin, targetPlayer) => {
   })
   
   let message = !isAuto ? config.Enabled_TpAuto : config.Disabled_TpAuto
-  player.sendMessage(`${chatPrefix} ${message}`)
+  soundReply(player, message, "note.pling")
 
 
   return {
