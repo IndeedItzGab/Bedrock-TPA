@@ -61,19 +61,19 @@ registerCommand(commandInformation, (origin, target) => {
     system.run(() => player.addTag("bedrocktpa:isTp"))
     system.runTimeout(() => {
       if(!player.hasTag("bedrocktpa:isTp")) return;
-      player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
-      player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
-      player.playSound("mob.endermen.portal")
-      targetPlayer.playSound("mob.endermen.portal")
-      targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message_TpAuto.replace("%player%", player.name)}`)
-      
-
       backData = backData.filter(d => d.name !== player.name)
       backData.push({
         name: player.name,
         location: player.location,
         dimension: player.dimension.id
       })
+
+      player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
+      player.sendMessage(`${chatPrefix} ${config.Teleported_Message}`)
+      player.playSound("mob.endermen.portal")
+      targetPlayer.playSound("mob.endermen.portal")
+      targetPlayer.sendMessage(`${chatPrefix} ${config.Teleported_Message_TpAuto.replace("%player%", player.name)}`)
+      
       system.run(() => player.removeTag("bedrocktpa:isTp"))
       db.store("backData", backData)
     }, config.delay_teleportation*20)

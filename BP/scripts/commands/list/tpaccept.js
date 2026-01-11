@@ -43,16 +43,18 @@ registerCommand(commandInformation, (origin) => {
       system.run(() => targetPlayer.addTag(`bedrocktpa:isTp`))
       system.runTimeout(() => {
         if(!targetPlayer.hasTag("bedrocktpa:isTp")) return
-        targetPlayer.tryTeleport(player.location, player.dimension)
-        soundReply(player, config.Teleported_Message, "mob.endermen.portal")
-        soundReply(targetPlayer, config.Teleported_Message, "mob.endermen.portal")
-        
+
         backData = backData.filter(d => d.name !== targetPlayer.name)
         backData.push({
           name: targetPlayer.name,
           location: targetPlayer.location,
           dimension: targetPlayer.dimension.id
         })
+        
+        targetPlayer.tryTeleport(player.location, player.dimension)
+        soundReply(player, config.Teleported_Message, "mob.endermen.portal")
+        soundReply(targetPlayer, config.Teleported_Message, "mob.endermen.portal")
+        
         system.run(() => targetPlayer.removeTag(`bedrocktpa:isTp`))
         db.store("backData", backData)
       }, config.delay_teleportation*20)
@@ -61,17 +63,19 @@ registerCommand(commandInformation, (origin) => {
       system.run(() => player.addTag(`bedrocktpa:isTp`))
       system.runTimeout(() => {
         if(!player.hasTag("bedrocktpa:isTp")) return
-        player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
-        system.run(() => player.removeTag(`bedrocktpa:isTp`))
-        soundReply(player, config.Teleported_Message, "mob.endermen.portal")
-        soundReply(targetPlayer, config.Teleported_Message, "mob.endermen.portal")
-  
+
         backData = backData.filter(d => d.name !== player.name)
         backData.push({
           name: player.name,
           location: player.location,
           dimension: player.dimension.id
         })
+
+        player.tryTeleport(targetPlayer.location, targetPlayer.dimension)
+        system.run(() => player.removeTag(`bedrocktpa:isTp`))
+        soundReply(player, config.Teleported_Message, "mob.endermen.portal")
+        soundReply(targetPlayer, config.Teleported_Message, "mob.endermen.portal")
+  
         db.store("backData", backData)
       }, config.delay_teleportation*20)
     }
