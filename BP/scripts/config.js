@@ -125,6 +125,7 @@ Player_Has_Ignored_You: "§6The player has §cignored §6your teleportation requ
 //This will keep the teleport request alive for X seconds
 keep_alive: 60,
 //This will delay the teleportation for X seconds
+Random_Teleport_Radius: 4000,
 delay_back_command: 5,
 delay_teleportation: 5,
 }
