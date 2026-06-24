@@ -24,25 +24,3 @@ world.afterEvents.entityHurt.subscribe((event) => {
   
   db.store("bedrocktpa:hurted", hurtedData)
 })
-
-system.runInterval(() => {
-  let hurtedData = db.fetch("bedrocktpa:hurted", true);
-  if (!hurtedData.length) return;
-
-  const now = system.currentTick;
-  const updatedData = [];
-
-  for (const data of hurtedData) {
-    const player = world.getPlayers({ name: data.name })[0];
-
-    if (!player) continue;
-
-    if (now >= data.time) {
-      player.removeTag("bedrocktpa:hurted");
-    } else {
-      updatedData.push(data);
-    }
-  }
-
-  db.store("bedrocktpa:hurted", updatedData);
-}, 20);
