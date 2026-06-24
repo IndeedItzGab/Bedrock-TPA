@@ -1,7 +1,4 @@
-import {
-  world,
-  system
-} from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
 import * as db from "../../utilities/DatabaseHandler.js"
@@ -25,7 +22,8 @@ let cooldowns = new Map()
 registerCommand(commandInformation, (origin, target) => {
   
   const player = origin.sourceEntity
-  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  if(player.getGameMode() === "Spectator")
+    return soundReply(player, config.Different_Gamemode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
@@ -38,22 +36,22 @@ registerCommand(commandInformation, (origin, target) => {
 
   // Main Function
   const targetPlayer = world.getPlayers().find(p => p.name === target)
-  if(!targetPlayer) return soundReply(player, config.Player_Is_Null, "note.bassattack")
-  
-  // Check if the targetPlayer disabled their tpa
-  const toggle = db.fetch("tpaToggle", true)
-  if(toggle.some(d => d.name === targetPlayer.name)) return soundReply(player, config.TpaToggled_Player_Message, "note.bassattack")
- 
-  // Check if the targetPlayer ignored player
-  const Ignore = db.fetch("tpaIgnoreRequest", true)
-  if(Ignore.some(d => d?.blocker === targetPlayer.name && d?.blockedUser === player.name)) return soundReply(player, config.Player_Has_Ignored_You, "note.bassattack")
+  if(!targetPlayer)
+    return soundReply(player, config.Player_Is_Null, "note.bassattack");
+  if(player.name === targetPlayer.name)
+    return soundReply(player, config.Player_Is_Player, "note.bassattack");
+  if(targetPlayer.getDynamicProperty("teleportationDisable"))
+    return soundReply(player, config.TpaToggled_Player_Message, "note.bassattack");
+  if(JSON.parse(targetPlayer.getDynamicProperty("ignorePlayers") || "[]").some(d => d === player.name))
+    return soundReply(player, config.Player_Has_Ignored_You, "note.bassattack");
+  if(player.getDynamicProperty("hurted") >= Date.now())
+    return soundReply(player, config.Damaged_Cancel_Message, "note.bassattack");
+  //if(targetPlayer.dimension.id !== player.dimension.id)
+  //  return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`);
 
   let teleportData = db.fetch("teleportRequest", true)
-  if(player.name === targetPlayer.name) return soundReply(player, config.Player_Is_Player, "note.bassattack")
-  //if(targetPlayer.dimension.id !== player.dimension.id) return player.sendMessage(`${chatPrefix} ${config.Player_Not_Same_World}`)
-  if(teleportData.some(d => d.requester === player.name && d.type === "tpahere")) return soundReply(player, config.Already_A_TPHere_Request, "note.bassattack")
-  if(player.hasTag("bedrocktpa:hurted")) return soundReply(player, config.Damaged_Cancel_Message, "note.bassattack")
-
+  if(teleportData.some(d => d.requester === player.name && d.type === "tpahere"))
+    return soundReply(player, config.Already_A_TPHere_Request, "note.bassattack");
 
   targetPlayer.sendMessage(`${chatPrefix} ${config.Sent_Here_Request_On_You.replace("%player%", player.name)}`)
   targetPlayer.sendMessage(`${chatPrefix} ${config.Accept_Message}`)
@@ -76,8 +74,4 @@ registerCommand(commandInformation, (origin, target) => {
     soundReply(player, config.Timed_Out_Here_Message, "note.bassattack")
     db.store("teleportRequest", teleportData)
   }, config.keep_alive*20)
-
-  return {
-    status: 0
-  }
 })

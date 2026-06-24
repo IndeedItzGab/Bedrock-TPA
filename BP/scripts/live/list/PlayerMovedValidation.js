@@ -6,7 +6,7 @@ const chatPrefix = config.prefix
 let tempCache = new Map()
 export function process() {
   for(const player of world.getPlayers()) {
-    if(!player.hasTag("bedrocktpa:isTp")) {
+    if(!player.getDynamicProperty("teleporting")) {
       tempCache.delete(player.id);
       continue;
     };
@@ -21,7 +21,7 @@ export function process() {
     if(cached) {
       if(cached.x === pos.x && cached.y === pos.y && cached.z === pos.z) continue;
       tempCache.delete(player.id)
-      system.run(() => player.removeTag("bedrocktpa:isTp"));
+      player.setDynamicProperty("teleporting", false)
       soundReply(player, config.Move_Cancel_Message, "note.bassattack")
     } else {
       tempCache.set(player.id, pos)

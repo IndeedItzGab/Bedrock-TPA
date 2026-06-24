@@ -1,10 +1,6 @@
-import {
-  world,
-  system
-} from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/DatabaseHandler.js"
 import { soundReply } from "../../utilities/SoundReply.js";
 const chatPrefix = config.prefix
 
@@ -35,41 +31,34 @@ registerCommand(commandInformation, (origin, target) => {
     cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
   }
   
-  let toggle = db.fetch("tpaToggle", true)
   if(target) {
     // Administrative Function
-    if(player.playerPermissionLevel !== 2) return player.sendMessage(`${chatPrefix} ${config.No_Permission_Message}`)
+    if(player.playerPermissionLevel !== 2) return soundReply(player, config.No_Permission_Message, "note.bassattack")
     const targetPlayer = world.getPlayers().find(p => p.name === target)
     if(!targetPlayer) return soundReply(player, config.Player_Is_Null, "note.bassattack")
     
-    if(toggle.some(d => d.name === targetPlayer.name)) {
+    if(targetPlayer.getDynamicProperty("teleportationDisable")) {
       // Enable TPA to a specified player
-      toggle = toggle.filter(d => d.name !== targetPlayer.name)
+      targetPlayer.setDynamicProperty("teleportationDisable", false)
       soundReply(targetPlayer, config.TpaToggle_Activated_Player_2.replace("%player%", player.name), "note.pling")
       soundReply(player, config.TpaToggle_Activated_Player.replace("%player%", targetPlayer.name), "note.banjo")
     } else {
       // Disable TPA to a specified player
-      toggle.push({
-        name: targetPlayer.name
-      })
+      targetPlayer.setDynamicProperty("teleportationDisable", true)
       soundReply(targetPlayer, config.TpaToggle_Deactivated_Player_2.replace("%player%", player.name), "note.pling")
       soundReply(player, config.TpaToggle_Deactivated_Player.replace("%player%", targetPlayer.name), "note.banjo")
     }
   } else {
     // Non-Administrative Function
-    if(toggle.some(d => d.name === player.name)) {
+    if(player.getDynamicProperty("teleportationDisable")) {
       // Enable TPA to a specified player
-      toggle = toggle.filter(d => d.name !== player.name)
-      player.sendMessage(`${chatPrefix} ${config.TpaToggle_Activated}`)
+      player.setDynamicProperty("teleportationDisable", false)
       soundReply(player, config.TpaToggle_Activated, "note.pling")
     } else {
       // Disable TPA to a specified player
-      toggle.push({
-        name: player.name
-      })
+      player.setDynamicProperty("teleportationDisable", true)
       soundReply(player, config.TpaToggle_Deactivated, "note.pling")
     }
   }
-  
-  db.store("tpaToggle", toggle)
+
 })

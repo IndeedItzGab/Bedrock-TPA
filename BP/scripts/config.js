@@ -91,16 +91,16 @@ Player_Has_Ignored_You: "§6The player has §cignored §6your teleportation requ
 // B A C K    S E T T I N G S
 
 // If you want to disable the back command, then set this to true
-// disable_back_command: false,
+// disable_back_command: false, // Not Implemented
 
 // If you want to disable the death coords message, then set this to true
-// disable_coords_message: false,
+// disable_coords_message: false, // Not Implemented
 
 // If you want to disable saving the death location, then set this to true
-// disable_back_on_death: false,
+// disable_back_on_death: false, // Not Implemented
 
 // If you want to disable saving the TP Locations such as TPA, TPAHERE, then set this to true
-// disable_back_on_tp: false,
+// disable_back_on_tp: false, // Not Implemented
 
 //Booleans
 //  If you want to disable checking for gamemode if equals to spectator, then set this to true
@@ -121,11 +121,13 @@ Player_Has_Ignored_You: "§6The player has §cignored §6your teleportation requ
 // If you want to disable logging /back locations from quitting the server, then set this to true
 // disable_back_on_quit: false, // Not Implemented
 
+
+Random_Teleport_Radius: 4000,
+
 // Everything works with SECONDS
 //This will keep the teleport request alive for X seconds
 keep_alive: 60,
 //This will delay the teleportation for X seconds
-Random_Teleport_Radius: 4000,
 delay_back_command: 5,
 delay_teleportation: 5,
 }

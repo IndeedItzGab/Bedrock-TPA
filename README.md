@@ -2,6 +2,11 @@
 [![DONATE](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/GabrielBondoc09)
 [![TWITTER](https://img.shields.io/twitter/follow/IndeedItzGab)](https://x.com/IndeedItzGab?t=UL3bhR8CksHJSWn89duhuA&s=09)
 [![DISCORD](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/23vG3Np6AH)
+[![CURSEFORGE](https://img.shields.io/curseforge/dt/1268250?logo=curseforge&label=CurseForge)](https://www.curseforge.com/minecraft-bedrock/scripts/bedrocktpa)
+[![GITHUB_DOWNLOADS](https://img.shields.io/github/downloads/indeeditzgab/bedrock-tpa/total?logo=github&label=Github%20Downloads)](https://github.com/IndeedItzGab/Bedrock-TPA/releases)
+[![GITHUB_RELEASE](https://img.shields.io/github/v/release/indeeditzgab/bedrock-tpa?logo=github&label=Github%20Release)](https://github.com/IndeedItzGab/bedrock-tpa/releases/latest)
+[![LATEST_PACK_CURSEFORGE](https://img.shields.io/curseforge/v/1268250?logo=curseforge&label=Latest)](https://www.curseforge.com/minecraft-bedrock/scripts/bedrocktpa/files/latest)
+[![LATEST_SUPPORTED_MINECRAFT_VERSION](https://img.shields.io/curseforge/game-versions/1268250?logo=CurseForge&label=Support%20Versions)](https://www.curseforge.com/minecraft-bedrock/scripts/bedrocktpa/files/)
 
 An Minecraft: Bedrock Edition add-on inspired by [Simple-TPA](https://www.spigotmc.org/resources/simple-tpa.64270/). Allowing players to teleport to another players providing better interaction between another.
 
@@ -20,6 +25,7 @@ Visit [here](docs/INSTRUCTIONS.md) for more information about installing this pr
 ## Features
 - Allows you to teleport to a certain players with if that player accepted your teleportation request.
 - You can teleport back to your recent location when you died or recently teleported to a certain player.
+- You can teleport to a random location with a single command.
 - You can automatically accept all teleportation request with one command.
 - You can request a player to teleport to you.
 - Custom Slash Commands. See [commands list](docs/COMMANDS.md)
@@ -32,8 +38,8 @@ Visit [here](docs/INSTRUCTIONS.md) for more information about installing this pr
 Please ensure your code follows our coding standard and includes tests where possible.
 
 ## Copyright
-© 2025 IndeedItzGab. All rights reserved.
-- You may not distribute this project without explicit permission and proper credit.
+© 2025-2026 IndeedItzGab. All rights reserved unless otherwise explicitly stated.
+- You can distribute this project with the **official download link only**, and proper credit.
 - You may modify this project for **personal use only**.
 
 ## Social

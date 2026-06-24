@@ -1,2 +1,19 @@
 # BedrockTPA V1.0.8
 - Revamped detection on administrators, players can now use any administrative commands as long as they are Operator. Therefore, `Admin` tag is no longer necessary for these.
+
+NEW update
+- This is an breaking update; I have made some revision regarding storing/fetching data(s) to make our code clean, simple, and efficient.
+- Added sound effect when a player try to execute a Operator only slash command.
+- Implemented new slash command for random location teleportation called **/rtpa** (contributed by [@keanbarz](https://github.com/keanbarz))
+- Fixed **/tpa** and **/back** not properly working after getting damaged during the process (reported and fixed by [@keanbarz](https://github.com/keanbarz)).
+- Fixed **/tpatoggle** sending two messages at once when enabling telepotation.
+- Updated copyright license
+
+- Update icon and thumbnal
+
+// teleporting (true/false) = whether to continue the teleportation
+// teleportationDisable (true/false) = whether the player disabled their teleportation
+// backLocation (location/dimension) = used in tpa, tpahere, death backLocation to back
+// hurted (Date.now()) = used to identify the entity is hurted
+// ignorePlayers (array) = used for ignoring player
+// autoAccept

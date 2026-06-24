@@ -1,7 +1,4 @@
-import {
-  world,
-  system
-} from "@minecraft/server";
+import { system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
 import * as db from "../../utilities/DatabaseHandler.js"
@@ -19,7 +16,8 @@ let cooldowns = new Map()
 registerCommand(commandInformation, (origin, targetPlayer) => {
   
   const player = origin.sourceEntity
-  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  if(player.getGameMode() === "Spectator")
+    return soundReply(player, config.Different_Gamemode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
@@ -30,18 +28,8 @@ registerCommand(commandInformation, (origin, targetPlayer) => {
     cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
   }
   
-  const isAuto = player.hasTag("tpaAuto")
-  
   // Main Function
-  system.run(() => {
-    !isAuto ? player.addTag("tpaAuto") : player.removeTag("tpaAuto")
-  })
-  
-  let message = !isAuto ? config.Enabled_TpAuto : config.Disabled_TpAuto
-  soundReply(player, message, "note.pling")
-
-
-  return {
-    status: 0
-  }
+  const autoAccept = player.getDynamicProperty("autoAccept")
+  player.setDynamicProperty("autoAccept", !autoAccept)
+  soundReply(player, !autoAccept ? config.Enabled_TpAuto : config.Disabled_TpAuto, "note.pling")
 })

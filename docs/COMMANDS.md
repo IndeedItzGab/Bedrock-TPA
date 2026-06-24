@@ -14,6 +14,7 @@ These commands are meant to be use by anyone with or without the permission leve
 |back         |                    |Teleports you to your last location.                                     |
 |tpaignore    |\<player\>          |Ignores a player from teleport requests.                                 |
 |tpatoggle    |                    |Disables/Enables the teleportation to you.                               |
+|rtpa         |                    |Teleport to a random location.                                           |
 
 ## Operator Commands 
 These commands are meant to be use by operators and cannot be accessible by non-operators.

@@ -1,12 +1,7 @@
-import {
-  world,
-  system
-} from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
 import { config } from "../../config.js"
-import * as db from "../../utilities/DatabaseHandler.js"
 import { soundReply } from "../../utilities/SoundReply.js";
-const chatPrefix = config.prefix
 
 const commandInformation = {
   name: "tpaignore",
@@ -22,9 +17,9 @@ const commandInformation = {
 
 let cooldowns = new Map()
 registerCommand(commandInformation, (origin, target) => {
-  
   const player = origin.sourceEntity
-  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  if(player.getGameMode() === "Spectator")
+    return  soundReply(player, config.Different_Gamemode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
@@ -36,25 +31,20 @@ registerCommand(commandInformation, (origin, target) => {
   }
 
   const targetPlayer = world.getPlayers().find(p => p.name === target)
-  if(!targetPlayer) return soundReply(player, config.Player_Is_Null, "note.bassattack")
+  if(!targetPlayer)
+    return soundReply(player, config.Player_Is_Null, "note.bassattack")
 
   // Main Function
-  let ignoreData = db.fetch("tpaIgnoreRequest", true)
-  if(player.name === targetPlayer.name) return soundReply(player, config.Player_Is_Player_tpignore, "note.bassattack")
+  const ignorePlayers = JSON.parse(player.getDynamicProperty("ignorePlayers") || "[]")
+  if(player.name === targetPlayer.name)
+    return soundReply(player, config.Player_Is_Player_tpignore, "note.bassattack")
   
-  if(!ignoreData.some(d => d?.blocker === player.name && d?.blockedUser === targetPlayer.name)) {
-    ignoreData.push({
-      blocker: player.name,
-      blockedUser: targetPlayer.name
-    })
+  if(!ignorePlayers?.some(d => d === targetPlayer.name)) {
+    ignorePlayers.push(targetPlayer.name)
+    player.setDynamicProperty("ignorePlayers", JSON.stringify(ignorePlayers))
     soundReply(player, config.Player_Is_Ignored, "note.pling")
   } else {
-    ignoreData = ignoreData.filter(d => d.blocker !== player.name && d.blockedUser !== targetPlayer.name)
+    player.setDynamicProperty("ignorePlayers", JSON.stringify(ignorePlayers.filter(d => d !== targetPlayer.name)))
     soundReply(player, config.Player_Is_Already_Ignored, "note.bassattack")
-  }
-  db.store("tpaIgnoreRequest", ignoreData)
-  
-  return {
-    status: 0
   }
 })
