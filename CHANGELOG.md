@@ -1,0 +1,12 @@
+- Improvement with **/rtpa** process
+- Players will be protected from any damages for 5 seconds after teleporting.
+- Implementation of **messages.js** to separate messages content from pack configurations. In adition, new format for people who wants to tweak the messages easier.
+- Implemented more configuration options
+  - You can now disable a certain message of your choice by using **null** as content in **messages.js** file.
+  - **detectMovement** - Used to cancel teleportation process if the player is moving.
+  - **detectCombat** - Used to cancel teleportation process if the player was in combat within 15 seconds.
+  - **soundEffects** - Used to apply sound effects for each events in the addon.
+  - **allowSpectator** - Used to allow players who are on spectator mode to use all available commands in this addon.
+  - **Back Features** - Used for allowing back features, such as saving death location, and saving previous teleportation location. (resolved #3)
+  - **Interdimensional Travel** - Used to allow players to teleport to a player from another dimension.
+  - **Invincibility** - Used to protect players from any damage after teleporting to the new location.

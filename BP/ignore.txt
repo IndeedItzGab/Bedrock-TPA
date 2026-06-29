@@ -2,13 +2,21 @@
 - Revamped detection on administrators, players can now use any administrative commands as long as they are Operator. Therefore, `Admin` tag is no longer necessary for these.
 
 NEW update
-- This is an breaking update; I have made some revision regarding storing/fetching data(s) to make our code clean, simple, and efficient.
-- Added sound effect when a player try to execute a Operator only slash command.
-- Implemented new slash command for random location teleportation called **/rtpa** (contributed by [@keanbarz](https://github.com/keanbarz))
-- Fixed **/tpa** and **/back** not properly working after getting damaged during the process (reported and fixed by [@keanbarz](https://github.com/keanbarz)).
-- Fixed **/tpatoggle** sending two messages at once when enabling telepotation.
-- Updated copyright license
+- Improvement with **/rtpa** process
+- Players will be protected from any damages for 5 seconds after teleporting.
+- Implementation of **messages.js** to separate messages content from pack configurations. In adition, new format for people who wants to tweak the messages easier.
+- Implemented more configuration options
+  - You can now disable a certain message of your choice by using **null** as content in **messages.js** file.
+  - **detectMovement** - Used to cancel teleportation process if the player is moving.
+  - **detectCombat** - Used to cancel teleportation process if the player was in combat within 15 seconds.
+  - **soundEffects** - Used to apply sound effects for each events in the addon.
+  - **allowSpectator** - Used to allow players who are on spectator mode to use all available commands in this addon.
+  - **Back Features** - Used for allowing back features, such as saving death location, and saving previous teleportation location.
+  - **Interdimensional Travel** - Used to allow players to teleport to a player from another dimension.
+  - **Invincibility** - Used to protect players from any damage after teleporting to the new location.
 
+
+- Implementation of Pack Setting for client and realm users, allowing them to configure the script seamlessly. 
 - Update icon and thumbnal
 
 // teleporting (true/false) = whether to continue the teleportation

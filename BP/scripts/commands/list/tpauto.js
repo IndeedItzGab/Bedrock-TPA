@@ -1,9 +1,8 @@
 import { system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
-import { config } from "../../config.js"
-import * as db from "../../utilities/DatabaseHandler.js"
-import { soundReply } from "../../utilities/SoundReply.js";
-const chatPrefix = config.prefix
+import config from "../../config.js"
+import Database from "../../utilities/DatabaseHandler.js"
+import messages from "../../messages.js";
 
 const commandInformation = {
   name: "tpauto",
@@ -16,20 +15,20 @@ let cooldowns = new Map()
 registerCommand(commandInformation, (origin, targetPlayer) => {
   
   const player = origin.sourceEntity
-  if(player.getGameMode() === "Spectator")
-    return soundReply(player, config.Different_Gamemode, "note.bassattack");
+  if(player.getGameMode() === "Spectator" && (config.overridePackSetting ? !config.allowSpectator : !world.getPackSettings()["bedrocktpa:allowSpectator"]))
+    return player?.sendSound(messages.spectatorMode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
+    player?.sendSound( `${messages.commandCooldown.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
   } else {
-    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
+    cooldowns.set(player.id, {tick: system.currentTick + (config.overridePackSetting ? config.commands.cooldown : world.getPackSettings()["bedrocktpa:commandsCooldown"])*20})
   }
   
-  // Main Function
+
   const autoAccept = player.getDynamicProperty("autoAccept")
   player.setDynamicProperty("autoAccept", !autoAccept)
-  soundReply(player, !autoAccept ? config.Enabled_TpAuto : config.Disabled_TpAuto, "note.pling")
+  player?.sendSound( !autoAccept ? messages.tpauto.enabled : messages.tpauto.disabled, "note.pling")
 })

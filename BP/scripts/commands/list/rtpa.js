@@ -1,8 +1,7 @@
 import { world, system } from "@minecraft/server";
 import { registerCommand } from "../CommandRegistry.js";
-import { config } from "../../config.js";
-import { soundReply } from "../../utilities/SoundReply.js";
-const chatPrefix = config.prefix;
+import config from "../../config.js";
+import messages from "../../messages.js";
 
 const commandInformation = {
   name: "rtpa",
@@ -22,72 +21,75 @@ let cooldowns = new Map();
 registerCommand(commandInformation, (origin, target) => {
   const player = origin.sourceEntity;
 
-  if (player.getGameMode() === "Spectator")
-    return soundReply(player, config.Different_Gamemode, "note.bassattack");
+  if(player.getGameMode() === "Spectator" && (config.overridePackSetting ? !config.allowSpectator : !world.getPackSettings()["bedrocktpa:allowSpectator"]))
+    return player.sendSound(messages.spectatorMode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
+    player.sendSound(`${messages.commandCooldown.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
   } else {
-    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
+    cooldowns.set(player.id, {tick: system.currentTick + (config.overridePackSetting ? config.commands.cooldown : world.getPackSettings()["bedrocktpa:commandsCooldown"])*20})
   }
 
   
   // Main
-  const radius = config.Random_Teleport_Radius;
+  const radius = (config.overridePackSetting ? config.randomTeleportationRadius : world.getPackSettings()["bedrocktpa:randomTeleportationRadius"]);
   let xrandom = Math.floor(Math.random() * (radius * 2)) - radius;
   let zrandom = Math.floor(Math.random() * (radius * 2)) - radius;
 
   const dimension = world.getDimension("overworld")
-  soundReply(player, config.Random_Teleport_Message.replace("%time%", config.delay_teleportation), "note.pling")
+  player.sendSound(messages.rtpa.start.replace("%time%", (config.overridePackSetting ? config.teleportationDelay : world.getPackSettings()["bedrocktpa:teleportationDelay"])), "note.pling")
   player.setDynamicProperty("teleporting", true)
   system.runTimeout(async () => {
     if(player.getDynamicProperty("teleporting")) {
-      await player.setDynamicProperty("backLocation", JSON.stringify({
-        location: player.location,
-        dimension: player.dimension.id
-      }))
-      main()
+      if(config.overridePackSetting ? config.back.saveTeleportation : world.getPackSettings()["bedrocktpa:saveTeleportation"]) {
+        await player.setDynamicProperty("backLocation", JSON.stringify({
+          location: player.location,
+          dimension: player.dimension.id
+        }))
+      }
       player.setDynamicProperty("teleporting", false)
-    }
-  }, config.delay_teleportation*20)
-  
-  async function main() {
-    const tpHigh = system.runInterval(() => {
-      player.tryTeleport({
-        x: xrandom,
-        y: 320,
-        z: zrandom
-      }, {dimension})
-    }, 1)
+      
+      let finding = true;
+      while(finding) {
+        const tpHigh = system.runInterval(() => {
+          player.tryTeleport({
+            x: xrandom,
+            y: 320,
+            z: zrandom
+          }, {dimension})
+        }, 1)
 
-    while (!dimension.isChunkLoaded({
-      x: xrandom,
-      y: 320,
-      z: zrandom
-    })) {
-      await new Promise(resolve => {
-        system.runTimeout(resolve, 1);
-      });
-    }
+        while (!dimension.isChunkLoaded({
+          x: xrandom,
+          y: 320,
+          z: zrandom
+        })) {
+          await new Promise(resolve => {
+            system.runTimeout(resolve, 1);
+          });
+        }
 
-    const topBlock = await dimension?.getTopmostBlock({x: xrandom, z: zrandom})
-    const firstBlock = dimension?.getBlock({ x: xrandom, y: topBlock?.location?.y + 1, z: zrandom })
-    const secondBlock = dimension?.getBlock({ x: xrandom, y: topBlock?.location?.y + 2, z: zrandom })
-    const isLiquid = (firstBlock?.isLiquid || firstBlock?.isWaterlogged) || (secondBlock?.isLiquid || secondBlock?.isWaterlogged)
+        const topBlock = await dimension?.getTopmostBlock({x: xrandom, z: zrandom})
+        const firstBlock = dimension?.getBlock({ x: xrandom, y: topBlock?.location?.y + 1, z: zrandom })
+        const secondBlock = dimension?.getBlock({ x: xrandom, y: topBlock?.location?.y + 2, z: zrandom })
+        const isLiquid = (firstBlock?.isLiquid || firstBlock?.isWaterlogged) || (secondBlock?.isLiquid || secondBlock?.isWaterlogged)
 
-    if(isLiquid) {
-      // Relocate
-      xrandom = Math.floor(Math.random() * (radius * 2)) - radius;
-      zrandom = Math.floor(Math.random() * (radius * 2)) - radius;
-      main()
-    } else {
-      soundReply(player, config.Teleported_Message, "mob.endermen.portal")
-      player.tryTeleport(firstBlock.location, {dimension})
+        if(isLiquid) {
+          // Relocate
+          xrandom = Math.floor(Math.random() * (radius * 2)) - radius;
+          zrandom = Math.floor(Math.random() * (radius * 2)) - radius;
+        } else {
+          finding = false
+          player.setDynamicProperty("invincibility", Date.now() + (5*1000))
+          player.sendSound(messages.teleportedSuccess, "mob.endermen.portal")
+          player.tryTeleport(firstBlock.location, {dimension})
+        }
+        system.clearRun(tpHigh)
+      }
     }
-    system.clearRun(tpHigh)
-  }
+  }, (config.overridePackSetting ? config.teleportationDelay : world.getPackSettings()["bedrocktpa:teleportationDelay"])*20)
 });
 

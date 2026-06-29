@@ -1,9 +1,8 @@
 import { world, system } from "@minecraft/server"
-import { config } from "../../config.js"
-import { soundReply } from "../../utilities/SoundReply.js"
-const chatPrefix = config.prefix
+import config from "../../config.js"
+import messages from "../../messages.js"
 
-let tempCache = new Map()
+const tempCache = new Map()
 export function process() {
   for(const player of world.getPlayers()) {
     if(!player.getDynamicProperty("teleporting")) {
@@ -22,7 +21,7 @@ export function process() {
       if(cached.x === pos.x && cached.y === pos.y && cached.z === pos.z) continue;
       tempCache.delete(player.id)
       player.setDynamicProperty("teleporting", false)
-      soundReply(player, config.Move_Cancel_Message, "note.bassattack")
+      player?.sendSound(messages.events.moved.message, "note.bassattack")
     } else {
       tempCache.set(player.id, pos)
     }

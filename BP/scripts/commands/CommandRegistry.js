@@ -1,7 +1,7 @@
 import {
   system
 } from "@minecraft/server";
-import { config } from "../config.js"
+import config from "../config.js"
 
 let commands = []
 export function registerCommand(comInfo, callback) {
@@ -54,7 +54,10 @@ export function registerCommand(comInfo, callback) {
 
 system.beforeEvents.startup.subscribe((init) => {
   for(const command of commands) {
-    init.customCommandRegistry.registerCommand(command.commandInformation, command.callback)
+    //init.customCommandRegistry.registerCommand(command.commandInformation, command.callback)
+    init.customCommandRegistry.registerCommand(command.commandInformation, (origin, firstArg, secondArg, thirdArg) => {
+      command.callback(origin, firstArg, secondArg, thirdArg)
+    })
   }
 })
 

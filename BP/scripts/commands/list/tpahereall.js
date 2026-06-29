@@ -1,9 +1,8 @@
 import { world, system } from "@minecraft/server";
 import { registerCommand }  from "../CommandRegistry.js"
-import { config } from "../../config.js"
-import * as db from "../../utilities/DatabaseHandler.js"
-import { soundReply } from "../../utilities/SoundReply.js";
-const chatPrefix = config.prefix
+import config from "../../config.js"
+import Database from "../../utilities/DatabaseHandler.js"
+import messages from "../../messages.js";
 
 const commandInformation = {
   name: "tpahereall",
@@ -17,28 +16,32 @@ let cooldowns = new Map()
 registerCommand(commandInformation, (origin) => {
   
   const player = origin.sourceEntity
-  if(player.getGameMode() === "Spectator") return player.sendMessage(`${chatPrefix} ${config.Different_Gamemode}`)
+  if(player.getGameMode() === "Spectator" && (config.overridePackSetting ? !config.allowSpectator : !world.getPackSettings()["bedrocktpa:allowSpectator"]))
+    return player.sendSound(messages.spectatorMode, "note.bassattack");
 
   // Cooldown
   const cooldown = cooldowns.get(player.id)
   if(cooldown?.tick >= system.currentTick) {
-    soundReply(player, `${config.Cooldown_Message.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
+    player?.sendSound(`${messages.commandCooldown.replace("%time%", (cooldown.tick - system.currentTick) / 20)}`, "note.bassattack")
     return;
   } else {
-    cooldowns.set(player.id, {tick: system.currentTick + config.commands.cooldown*20})
+    cooldowns.set(player.id, {tick: system.currentTick + (config.overridePackSetting ? config.commands.cooldown : world.getPackSettings()["bedrocktpa:commandsCooldown"])*20})
   }
 
   // Main Function
-  let teleportData = db.fetch("teleportRequest", true)
+  let teleportData = Database.fetch("teleportRequest", true)
   for(const targetPlayer of world.getPlayers()) {
-    if(player.name === targetPlayer.name) continue;
-    if(teleportData.some(d => d.receiver === targetPlayer.name && d.type === "tpahere")) continue; // Avoid requesting to a player with an on-going teleportation here request
-    if(targetPlayer.getDynamicProperty("teleportationDisable")) continue;
-    if(JSON.parse(targetPlayer.getDynamicProperty("ignorePlayers") || "[]").some(d => d === player.name)) continue;
+    if(
+      player.name === targetPlayer.name
+      || teleportData.some(d => d.receiver === targetPlayer.name && d.type === "tpahere")
+      || targetPlayer.getDynamicProperty("teleportationDisable")
+      || JSON.parse(targetPlayer.getDynamicProperty("ignorePlayers") || "[]").some(d => d === player.name)
+      || (targetPlayer.dimension.id !== player.dimension.id && (config.overridePackSetting ? !config.interdimensionalTravel : !world.getPackSettings()["bedrocktpa:interdimensionalTravel"]))
+    ) continue;
 
-    targetPlayer.sendMessage(`${chatPrefix} ${config.Sent_Here_Request_On_You.replace("%player%", player.name)}`)
-    targetPlayer.sendMessage(`${chatPrefix} ${config.Accept_Message}`)
-    soundReply(targetPlayer, config.Deny_Message, "note.banjo")
+    targetPlayer?.sendSound(messages.tpahere.target.message.replace("%player%", player.name))
+    targetPlayer?.sendSound(messages.tpa.target.accept)
+    targetPlayer.sendSound(messages.tpa.target.deny, "note.banjo")
 
     teleportData.push({
       requester: player.name,
@@ -46,16 +49,16 @@ registerCommand(commandInformation, (origin) => {
       type: "tpahere"
     })
     
-    db.store("teleportRequest", teleportData)
+    Database.store("teleportRequest", teleportData)
     
     // Delay the teleportation with the given configuration.
     system.runTimeout(() => {
-      teleportData = db.fetch("teleportRequest", true)
+      teleportData = Database.fetch("teleportRequest", true)
       if(!teleportData.find(d => d.receiver === targetPlayer.name && d.requester === player.name && d.type === "tpahere")) return;
       teleportData = teleportData.filter(d => !(d.receiver === targetPlayer.name && d.requester === player.name && d.type === "tpahere"))
-      soundReply(player, config.Timed_Out_Here_Message, "note.bassattack")
-      db.store("teleportRequest", teleportData)
-    }, config.keep_alive*20)
+      player?.sendSound(messages.tpahere.timeout, "note.bassattack")
+      Database.store("teleportRequest", teleportData)
+    }, (config.overridePackSetting ? config.teleportationTimeout : world.getPackSettings()["bedrocktpa:teleportationTimeout"])*20)
   }
-  soundReply(player, config.Teleport_Message_Back_To_Sender_TPHEREALL, "note.banjp")
+  player?.sendSound(messages.tpahere.all, "note.banjp")
 })

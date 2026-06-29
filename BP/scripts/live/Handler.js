@@ -1,6 +1,10 @@
-import { system } from "@minecraft/server"
+import { system, world } from "@minecraft/server"
+import config from "../config.js";
 import * as PlayerMovedValidation from "./list/PlayerMovedValidation.js"
 
-system.runInterval(() => {
-  PlayerMovedValidation.process();
-}, 1*20)
+if(config.overridePackSetting ? config.detectMovement : world.getPackSettings()["bedrocktpa:detectMovement"]) {
+  system.runInterval(() => {
+    PlayerMovedValidation.process();
+  }, 1*20)
+}
+

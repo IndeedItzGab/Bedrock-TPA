@@ -1,18 +1,18 @@
 {
-  "format_version": 2,
+  "format_version": 3,
   "header": {
-    "name": "Bedrock-TPA §r(§a1.1.4§r)",
+    "name": "Bedrock-TPA §r(§a1.1.5§r)",
     "description": "§aA script that request a teleportation to another player or even go back to your recent location.",
     "uuid": "0ea9e2fe-38c2-4f02-90db-f949d6fe75d4",
-    "min_engine_version": [1, 21, 120],
-    "version": [1, 1, 4]
+    "min_engine_version": "1.21.130",
+    "version": "1.1.5"
   },
   "modules": [
     {
       "description": "Behavior Pack Module",
       "type": "data",
       "uuid": "0a28dc35-1625-47e9-94c9-3435dfdc9d2a",
-      "version": [1, 0, 0]
+      "version": "1.0.0"
     },
     {
       "description": "scripts",
@@ -20,7 +20,109 @@
       "language": "javascript",
       "entry": "scripts/index.js",
       "uuid": "6964b53a-d5e1-4a67-8aee-933379bfdf73",
-      "version": [1, 0, 0]
+      "version": "1.0.0"
+    }
+  ],
+  "settings": [
+    {
+      "type": "label",
+      "text": "§lBedrockTPA§r\n§6NOTE: Changing these settings requires you to restart the world to apply the changes."
+    },
+    {
+      "type": "slider",
+      "text": "Commands Cooldown\n§iThis is used by non-operator commands to cooldown the usage",
+      "name": "bedrocktpa:commandsCooldown",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "slider",
+      "text": "Random Teleportation Radius\n§iThe radius of the random teleportation about how far the player will go.",
+      "name": "bedrocktpa:randomTeleportationRadius",
+      "min": 100,
+      "max": 10000,
+      "step": 100,
+      "default": 4000
+    },
+    {
+      "type": "slider",
+      "text": "Request Timeout\n§iThe teleprotation timeout of each requests.",
+      "name": "bedrocktpa:teleportationTimeout",
+      "min": 0,
+      "max": 600,
+      "step": 1,
+      "default": 60
+    },
+    {
+      "type": "slider",
+      "text": "Teleportation Delay\n§iTeleportation delay before proceeding on teleporting.",
+      "name": "bedrocktpa:teleportationDelay",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "toggle",
+      "text": "Enable message prefix\n§iUsed the addon message prefix that you see every single messages from this addon: [BedrockTPA]",
+      "name": "bedrocktpa:messagePrefix",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Back Features\n§iThis feature allow players to save their recent location after death or teleportation",
+      "name": "bedrocktpa:enableBackCommand",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Save Death Location\n§iSave the death location to with \"/back\" command",
+      "name": "bedrocktpa:saveDeath",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Save Previous Location\n§iSave the previous location after using rtpa, tpa, or tpahere.",
+      "name": "bedrocktpa:saveTeleportation",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Allow Spectator\n§iAllow spectators to use commands from this addon.",
+      "name": "bedrocktpa:allowSpectator",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Detect Movement\n§iUsed to cancel teleportation process if the player is moving.",
+      "name": "bedrocktpa:detectMovement",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Detect Combat\n§iUsed to cancel teleportation process if the player was in combat within 15 seconds.",
+      "name": "bedrocktpa:detectCombat",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Sound Effects\n§iUsed to apply sound effects for each events in the addon.",
+      "name": "bedrocktpa:soundEffects",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Interdimensional Travel\n§iUsed to allow players to teleport to a player from another dimension.",
+      "name": "bedrocktpa:interdimensionalTravel",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Invincibility\n§iUsed to protect players from any damage after teleporting to the new location.",
+      "name": "bedrocktpa:invincibility",
+      "default": true
     }
   ],
   "dependencies": [
@@ -30,7 +132,7 @@
     }
   ],
   "metadata": {
-    "author": ["IndeedItzGab"],
+    "authors": ["IndeedItzGab"],
     "url": "https://github.com/IndeedItzGab/Bedrock-TPA",
     "license": "All Rights Reserved unless otherwise explicitly stated.",
     "product_type": "addon"

@@ -1,0 +1,97 @@
+# This workflow allow me to easily upload a certain version of my project within the github tags and externally.
+
+name: Publisher
+on:
+  workflow_dispatch:
+    inputs:
+      status:
+        description: "Status"
+        required: true
+        default: "STABLE"
+        type: choice
+        options:
+        - STABLE
+        - BETA
+        - ALPHA
+
+      version:
+        description: 'Release Version'
+        required: true
+        type: string
+      
+      changelog:
+        description: "Changelog"
+        require: true
+        type: string
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    environment: Publisher
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.Js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Compression Session
+        run: |
+          FILE_NAME="${{ vars.PROJECT_NAME }}-${{ inputs.version }} (${{ inputs.status }}).mcpack"
+          zip -r temp.zip BP/*
+          mv temp.zip "$FILE_NAME"
+          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+
+      - name: Upload to Github Tag
+        env:
+          CHANGELOG: ${{ inputs.changelog }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ inputs.version }}" -m "$CHANGELOG"
+          git push origin "${{ inputs.version }}"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ inputs.version }}
+          release_name: ${{ inputs.version }}
+          body: |
+            ${{ inputs.changelog }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Github Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.FILE_NAME }}
+          asset_name: ${{ env.FILE_NAME }}
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install node-fetch form-data
+
+      - name: CurseForge Uploader and Discord Notifier
+        run: node .github/workflows/utils/mainUtils.js
+        env:
+          ROLE: ${{ vars.ROLE }}
+          PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+          THREAD_ID: ${{ vars.THREAD_ID }}
+          CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID}}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          VERSION: ${{ inputs.version }}
+          CHANGELOG: ${{ inputs.changelog }}
+          FILE_NAME: ${{ env.FILE_NAME }}
+          GITHUB_RELEASE: ${{ steps.create_release.outputs.html_url }}
