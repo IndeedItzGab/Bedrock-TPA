@@ -18,11 +18,6 @@ on:
         description: 'Release Version'
         required: true
         type: string
-      
-      changelog:
-        description: "Changelog"
-        require: true
-        type: string
 
 jobs: 
   build:
@@ -43,9 +38,17 @@ jobs:
       - name: Compression Session
         run: |
           FILE_NAME="${{ vars.PROJECT_NAME }}-${{ inputs.version }} (${{ inputs.status }}).mcpack"
+          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
           zip -r temp.zip BP/*
           mv temp.zip "$FILE_NAME"
-          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+
+      - name: Read changelog
+        id: changelog
+        run: |
+          CHANGELOG=$(cat CHANGELOG.md)
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Upload to Github Tag
         env:
@@ -63,7 +66,8 @@ jobs:
           tag_name: ${{ inputs.version }}
           release_name: ${{ inputs.version }}
           body: |
-            ${{ inputs.changelog }}
+            # ${{ vars.PROJECT_NAME }} V${{ inputs.version }}
+            ${{ env.CHANGELOG }}
           draft: false
           prerelease: false
         env:
@@ -92,6 +96,5 @@ jobs:
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           VERSION: ${{ inputs.version }}
-          CHANGELOG: ${{ inputs.changelog }}
           FILE_NAME: ${{ env.FILE_NAME }}
           GITHUB_RELEASE: ${{ steps.create_release.outputs.html_url }}

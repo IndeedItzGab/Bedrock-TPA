@@ -3,18 +3,20 @@ import fetch from "node-fetch"
 import FormData from "form-data"
 import path from "path";
 
+const changelog = fs.readFileSync("CHANGELOG.md", "utf8");
+
 (async () => {
   const curseForgeFileID = await curseforgeUpload();
   const content = `
 # ${process.env.PROJECT_NAME} V${process.env.VERSION}
-${process.env.CHANGELOG}
+${changelog}
 
 ### Download Section
 - <:linkvertise:1514208079502118942> [Linkvertise](https://linkvertise.com/1073400/FvQG2MBcODtc?o=sharing) (to support me!)
 - <:Github:1393587335979073698> [Github](${process.env.GITHUB_RELEASE})
 - <:CurseForge:1377993483800940584> [CurseForge](https://www.curseforge.com/minecraft-bedrock/scripts/${process.env.PROJECT_NAME}/files/${curseForgeFileID})
 
-<@${process.env.ROLE}>
+<@&${process.env.ROLE}>
 -# You may need to wait for CurseForge to upload the file in order for you to download it. Therefore, you can either wait for the file in curseforge or download it directly from Github.`;
 
   const res = await fetch(process.env.DISCORD_WEBHOOK + `?thread_id=${process.env.THREAD_ID}`, {
@@ -42,7 +44,7 @@ async function curseforgeUpload() {
   form.append("file", fs.createReadStream(filePath));
   form.append("metadata",
     JSON.stringify({
-      changelog: process.env.CHANGELOG,
+      changelog: changelog,
       changelogType: "markdown",
       gameVersion: [],
       releaseType: "release",
